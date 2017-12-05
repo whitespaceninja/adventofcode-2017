@@ -15,29 +15,27 @@
   
 (defn has-duplicates?
   ;; assumes int-list is a list of ints in reverse order
-  [str-list index equality-fn]
-  (let [num-count (count str-list)
-        this-str (nth str-list index)
-        other-strs (take-last (- num-count index 1) str-list)
-        sames (filter #(equality-fn this-str %) other-strs)
-        next-index (+ index 1)]
-    (if (= next-index num-count)
+  [str-list equality-fn]
+  (let [this-str (first str-list)
+        other-strs (rest str-list)
+        sames (filter #(equality-fn this-str %) other-strs)]
+    (if (empty? other-strs)
       false
       (if (empty? sames)
-        (recur str-list (+ 1 index) equality-fn)
+        (recur other-strs equality-fn)
         true))))
 
 (defn puzzle-4-2
   [input]
   (->> (convert-input-to-tokens input)
-       (map #(has-duplicates? % 0 is-anagram?))
+       (map #(has-duplicates? % is-anagram?))
        (filter false?)
        (count)))
 
 (defn puzzle-4-1
   [input]
   (->> (convert-input-to-tokens input)
-       (map #(has-duplicates? % 0 =))
+       (map #(has-duplicates? % =))
        (filter false?)
        (count)))
 
