@@ -8,10 +8,10 @@
 
 (defn is-anagram?
   [x y]
-  (if (not= (count x) (count y))
-    false
-    (and (every? true? (map #(str/includes? (str y) (str %)) x))
-         (every? true? (map #(str/includes? (str x) (str %)) y)))))
+  (and (= (count x) (count y))
+       (every? true? (map #(str/includes? (str y) (str %)) x))
+       (every? true? (map #(str/includes? (str x) (str %)) y))))
+
   
 (defn has-duplicates?
   ;; assumes int-list is a list of ints in reverse order
