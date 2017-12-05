@@ -16,23 +16,19 @@
        (map #(str/split % #"\t"))
        (map convert-to-ints)))
 
-(defn check-divisible-against-others
-  [int-list index]
-  (let [num-count (count int-list)
-        this-num (nth int-list index)
-        other-nums (take-last (- num-count index 1) int-list)
-        divisible (filter #(= 0 (mod (/ this-num %) 1)) other-nums)]
-    (if (empty? divisible)
-      nil
-      [this-num (first divisible)])))
+(defn is-divisible?
+  [x y]
+  (= 0 (mod (/ x y) 1)))
 
 (defn find-divisible-pair
+  ;; assumes int-list is a list of ints in reverse order
   [int-list]
-  (let [num-count (count int-list)]
-    (->> (map #(check-divisible-against-others int-list %)
-              (range num-count))
-         (filter #(not (empty? %)))
-         first)))
+  (let [this-num (first int-list)
+        other-nums (rest int-list)
+        divisible (filter #(is-divisible? this-num %) other-nums)]
+    (if (empty? divisible)
+      (recur other-nums)
+      [this-num (first divisible)])))
 
 (defn puzzle-2-2
   [input]
@@ -40,7 +36,7 @@
        (convert-input-to-ints)
        (map sort)
        (map reverse)
-       (map find-divisible-pair)
+       (map #(find-divisible-pair %))
        (map #(/ (first %) (second %)))
        (reduce +)))
 
