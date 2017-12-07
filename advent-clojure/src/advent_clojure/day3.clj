@@ -8,10 +8,6 @@
   ([a]
    (lazy-seq (cons a (cons a (doubles-seq (+ a 1)))))))
 
-(defn is-turn?
-  [pos turn-list]
-  (some #(= pos %) turn-list))
-
 (defn get-turns
   [pos turn-list]
   (reduce (fn [a v]
@@ -36,9 +32,9 @@
     (= DIR_NORTH direction) (assoc prev-location :y (+ -1 (:y prev-location)))
     (= DIR_WEST direction) (assoc prev-location :x (+ -1 (:x prev-location)))))
 
-(defn turn
+(defn turn-left
   [cur-direction]
-  (mod (+ 1 cur-direction) 4))
+  (mod (+ 1 cur-direction) NUM_DIRECTIONS))
     
 (defn build-nodes
   ([cur-index direction prev-location turn-list]
@@ -48,7 +44,7 @@
          is-turn (= cur-index next-turn)
          turn-index (if is-turn (+ turn-index 1) turn-index)
          direction (if is-turn
-                     (turn direction)
+                     (turn-left direction)
                      direction)
          next-location (get-next-location direction prev-location)]
      (lazy-seq (cons {:location prev-location}
