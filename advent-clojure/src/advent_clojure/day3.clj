@@ -38,16 +38,21 @@
 
 (defn turn
   [cur-direction]
-  (mod (+ 1 cur-direction) NUM_DIRECTIONS))
+  (mod (+ 1 cur-direction) 4))
     
 (defn build-nodes
-  [cur-index direction prev-location turn-list]
-  (let [next-location (get-next-location direction prev-location)
-        next-direction (if (is-turn? (+ 1 cur-index) turn-list)
-                         (turn direction)
-                         direction)]
-    (lazy-seq (cons {:location prev-location}
-                     (build-nodes (+ 1 cur-index) next-direction next-location turn-list)))))
+  ([cur-index direction prev-location turn-list]
+   (build-nodes cur-index direction prev-location turn-list 0))
+  ([cur-index direction prev-location turn-list turn-index]
+   (let [next-turn (nth turn-list turn-index)
+         is-turn (= cur-index next-turn)
+         turn-index (if is-turn (+ turn-index 1) turn-index)
+         direction (if is-turn
+                     (turn direction)
+                     direction)
+         next-location (get-next-location direction prev-location)]
+     (lazy-seq (cons {:location prev-location}
+                     (build-nodes (+ 1 cur-index) direction next-location turn-list turn-index))))))
 
 ;; how much do we add to the current location to find a neighbor?
 (def NEIGHBORS [[0 -1] [-1 -1] [-1 0]
@@ -90,18 +95,17 @@
   [input]
   (let [all-nodes (build-nodes
                    1
-                   DIR_EAST
+                   DIR_SOUTH
                    {:x 0 :y 0}
                    (get-turns input (doubles-seq)))]
     (walk-spiral-2 0 input all-nodes nil)))
 
 (defn puzzle-3-1-alt
   ;; This version walks the spiral with the build-nodes generator
-  ;; but it is much slower than the math-y way below
   [input]
   (let [all-nodes (build-nodes
                    1
-                   DIR_EAST
+                   DIR_SOUTH
                    {:x 0 :y 0}
                    (get-turns input (doubles-seq)))
         final-node (nth all-nodes (- input 1))]
