@@ -71,6 +71,9 @@ def puzzle1_alt(puzzle_input):
     # comparison is circular, one trick is to add first character to the end
     list_of_numbers.append(list_of_numbers[0])
 
+    reduce_total = reduce(compare_ints, list_of_numbers)
+    print("reduced " + str(reduce_total))
+
     for c_now in list_of_numbers:
         running_total = running_total + compare_ints(c_now, previous_c)
         previous_c = c_now
