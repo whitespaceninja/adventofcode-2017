@@ -2,7 +2,6 @@
   (:require [clojure.string :as str]))
 
 (def real-rope (vec (range 0 256)))
-(def test-rope (vec (range 0 5)))
 
 (defn add-within
   [rope & nums-to-add]
