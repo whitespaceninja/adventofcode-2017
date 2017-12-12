@@ -1,10 +1,14 @@
-# DONE ead the input
+# DONE read the input
 # DONE Isolate each row as a piece of data
 # DONE Have to process each row
 #   DONE Find the largest value in a row
 #   DONE Find the smallest value in a row
 #   DONE Find the row difference between big/small in a row
 # DONE Sum up all of the row differences
+
+# Part 2
+# DONE Divide every number by every other number in the row
+
 import csv
 
 def process_row(row):
@@ -19,7 +23,30 @@ def process_row(row):
 
     return difference
 
-def process_file(filename):
+def process_row_divisible(row):
+    int_list = map(int, row)
+    length = len(int_list)
+    total = 0
+
+    i = 0
+    while i < len(int_list):
+        first_digit = int_list[i]
+        j = 0
+        while j < len(int_list):
+            if j != i:
+                other_digit = int_list[j]
+                division = float(first_digit) / other_digit
+                is_digit = division.is_integer()
+                if is_digit:
+                    total += division
+            j += 1
+        
+        i += 1
+
+    return total
+
+
+def process_file(filename, row_function):
     totals = 0
     # open up the file as a generic file
     with open(filename, 'rb') as csvfile:
@@ -29,15 +56,19 @@ def process_file(filename):
         # loop through each row in the file
         for row in csvreader:
             # process, then add to our final total
-            difference = process_row(row)
+            difference = row_function(row)
             totals = totals + difference
 
     return totals
 
-part_1_answer = process_file("day2_input.csv")
+part_1_answer = process_file("day2_input.csv", process_row)
+part_2_answer = process_file("day2_input.csv", process_row_divisible)
 
 print("Final answer is: ")
 print(part_1_answer)
+
+print("Final answer Part 2 is: ")
+print(part_2_answer)
 
 
 #======================================================
@@ -57,6 +88,6 @@ def process_file_alt(filename):
         # sum up all of the differences
         return sum(processed)
 
-part_1_answer = process_file_alt("day2_input.csv")
-print("Final answer_alt is: ")
-print(part_1_answer)
+#part_1_answer = process_file_alt("day2_input.csv")
+#print("Final answer_alt is: ")
+#print(part_1_answer)
