@@ -75,7 +75,7 @@ print(part_2_answer)
 # Alternative way of solving using map instead of looping
 #======================================================
 
-def process_file_alt(filename):
+def process_file_alt(filename, row_function):
     # open up the file as a generic file
     with open(filename, 'rb') as csvfile:
         # create a csv reader which means we want python to read as a csv
@@ -83,11 +83,44 @@ def process_file_alt(filename):
 
         # map the process_row function over each row 
         # and get a list of differences back
-        processed = map(process_row, csvreader)
+        processed = map(row_function, csvreader)
 
         # sum up all of the differences
         return sum(processed)
 
-#part_1_answer = process_file_alt("day2_input.csv")
-#print("Final answer_alt is: ")
-#print(part_1_answer)
+def check_division(x, y):
+    # check division 
+    division = float(x) / y
+    if division.is_integer():
+        return division
+    
+    return None
+
+def get_divisible_division(numbers):
+    # compare first number to every other number
+    number = numbers[0]
+    other_numbers = numbers[1:]
+    divisions = map(lambda x: check_division(number, x), other_numbers)
+
+    # filter out anything that came back 'None'
+    filtered = filter(lambda x: x is not None, divisions)
+    if filtered:
+        return filtered[0]
+
+    # didn't find anything, call this with the other numbers
+    return get_divisible_division(other_numbers)
+
+def process_row_divisible_alt(row):
+    int_list = map(int, row)
+    # do a reverse sort so that division works properly
+    ints_sorted = list(reversed(sorted(int_list)))
+    divisibles = get_divisible_division(ints_sorted)
+    return divisibles
+
+part_1_answer = process_file_alt("day2_input.csv", process_row)
+print("Final answer_alt is: ")
+print(part_1_answer)
+
+part_2_answer = process_file_alt("day2_input.csv", process_row_divisible_alt)
+print("Final answer_alt2 is: ")
+print(part_2_answer)
