@@ -13,7 +13,7 @@ import csv
 
 def process_row(row):
     # convert to ints
-    int_list = map(int, row)
+    int_list = list(map(int, row))
 
     max_value = max(int_list)
     min_value = min(int_list)
@@ -24,7 +24,7 @@ def process_row(row):
     return difference
 
 def process_row_divisible(row):
-    int_list = map(int, row)
+    int_list = list(map(int, row))
     length = len(int_list)
     total = 0
 
@@ -49,7 +49,7 @@ def process_row_divisible(row):
 def process_file(filename, row_function):
     totals = 0
     # open up the file as a generic file
-    with open(filename, 'rb') as csvfile:
+    with open(filename, 'rt') as csvfile:
         # create a csv reader which means we want python to read as a csv
         csvreader = csv.reader(csvfile)
 
@@ -70,6 +70,15 @@ print(part_1_answer)
 print("Final answer Part 2 is: ")
 print(part_2_answer)
 
+def get_text_lines():
+    with open("puzzle4input.txt") as source_data:
+        reader = csv.reader(source_data, delimiter=" ")
+        for line in reader:
+            yield line
+
+for line in get_text_lines():
+    # do something
+
 
 #======================================================
 # Alternative way of solving using map instead of looping
@@ -77,7 +86,7 @@ print(part_2_answer)
 
 def process_file_alt(filename, row_function):
     # open up the file as a generic file
-    with open(filename, 'rb') as csvfile:
+    with open(filename, 'rt') as csvfile:
         # create a csv reader which means we want python to read as a csv
         csvreader = csv.reader(csvfile)
 
