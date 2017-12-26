@@ -30,13 +30,6 @@
       components
       (recur others components))))
 
-(defn get-bridge-strength
-  [bridge]
-  (reduce (fn [a v]
-            (+ a (apply + v)))
-          0
-          bridge))
-
 (defn remove-one
   [components num]
   (let [[n m] (split-with (partial not= num) components)]
@@ -50,16 +43,31 @@
         next-comps (get-components other-pin-val components)
         depth (+ 1 depth)]
     (if (empty? next-comps)
-      bridge
-      (apply max (map #(build-bridge % other-pin-val bridge components depth) next-comps)))))
+      {:strength bridge :length depth}
+      (map #(build-bridge % other-pin-val bridge components depth) next-comps))))
 
 (defn puzzle-24-1
   [input]
   (let [components (parse-input input)
         starting-blocks (get-components 0 components)
         other-blocks (remove-comps starting-blocks components)
-        bridges (pmap #(build-bridge % 0 0 other-blocks 0) starting-blocks)]
-    bridges))
-;    (map get-biggest-strength bridges))) 
+        strongest (->> (pmap #(build-bridge % 0 0 other-blocks 0) starting-blocks)
+                     flatten
+                     (sort-by :strength)
+                     last)]
+    strongest))
         
-       
+(defn puzzle-24-2
+  [input]
+  (let [components (parse-input input)
+        starting-blocks (get-components 0 components)
+        other-blocks (remove-comps starting-blocks components)
+        bridges (->> (pmap #(build-bridge % 0 0 other-blocks 0) starting-blocks)
+                     flatten
+                     (sort-by :length))
+        longest (last bridges)
+        strongest (->> bridges
+                      (filter #(= (:length longest) (:length %)))
+                      (sort-by :strength)
+                      last)]
+    strongest))
