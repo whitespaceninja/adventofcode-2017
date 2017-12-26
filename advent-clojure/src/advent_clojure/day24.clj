@@ -37,23 +37,28 @@
           0
           bridge))
 
+(defn remove-one
+  [components num]
+  (let [[n m] (split-with (partial not= num) components)]
+    (concat n (rest m))))
+
 (defn build-bridge
-  [prev-comp bridge components depth]
-  (let [bridge (conj bridge prev-comp)
+  [prev-comp prev-val bridge components depth]
+  (let [bridge (+ bridge (apply + prev-comp))
         components (remove-comp prev-comp components)
-        next-comps (->> (map #(get-components % components) prev-comp)
-                        (apply concat))
+        other-pin-val (first (remove-one prev-comp prev-val))
+        next-comps (get-components other-pin-val components)
         depth (+ 1 depth)]
     (if (empty? next-comps)
-      (get-bridge-strength bridge)
-      (apply max (map #(build-bridge % bridge components depth) next-comps)))))
+      bridge
+      (apply max (map #(build-bridge % other-pin-val bridge components depth) next-comps)))))
 
 (defn puzzle-24-1
   [input]
   (let [components (parse-input input)
         starting-blocks (get-components 0 components)
         other-blocks (remove-comps starting-blocks components)
-        bridges (pmap #(build-bridge % [] other-blocks 0) starting-blocks)]
+        bridges (pmap #(build-bridge % 0 0 other-blocks 0) starting-blocks)]
     bridges))
 ;    (map get-biggest-strength bridges))) 
         
