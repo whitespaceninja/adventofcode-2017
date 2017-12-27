@@ -3,7 +3,7 @@
 
 (defn convert-to-ints
   [list-of-str]
-  (map #(read-string %) list-of-str))
+  (map read-string list-of-str))
 
 (defn filter-to-sm-lg
   [item-list]
@@ -12,7 +12,7 @@
 
 (defn convert-input-to-ints
   [input]
-  (->> (str/split input #"\n")
+  (->> (str/split-lines input)
        (map #(str/split % #"\t"))
        (map convert-to-ints)))
 
@@ -36,7 +36,7 @@
        (convert-input-to-ints)
        (map sort)
        (map reverse)
-       (map #(find-divisible-pair %))
+       (map find-divisible-pair)
        (map #(/ (first %) (second %)))
        (reduce +)))
 

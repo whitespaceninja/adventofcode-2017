@@ -3,7 +3,7 @@
 
 (defn convert-input-to-ints
   [input]
-  (->> (str/split input #"\n")
+  (->> (str/split-lines input)
        (map read-string)))
 
 (defn out-of-index
@@ -22,23 +22,25 @@
     (+ x 1)))
 
 (defn walk
-  [cur-index num-steps jump-fn step-list]
-  (let [step (nth step-list cur-index)
-        next-index (+ cur-index step)
-        num-steps (+ 1 num-steps)]
-    (if (out-of-index next-index step-list)
-      num-steps
-      (let [updated-list (assoc step-list cur-index (jump-fn step))]
-        (recur next-index num-steps jump-fn updated-list)))))
+  ([jump-fn step-list]
+   (walk 0 0 jump-fn step-list))
+  ([cur-index num-steps jump-fn step-list]
+   (let [step (nth step-list cur-index)
+         next-index (+ cur-index step)
+         num-steps (+ 1 num-steps)]
+     (if (out-of-index next-index step-list)
+       num-steps
+       (let [updated-list (assoc step-list cur-index (jump-fn step))]
+         (recur next-index num-steps jump-fn updated-list))))))
 
 (defn puzzle-5-2
   [input]
   (->> (convert-input-to-ints input)
        (vec)
-       (walk 0 0 stranger-jump)))
+       (walk stranger-jump)))
 
 (defn puzzle-5-1
   [input]
   (->> (convert-input-to-ints input)
        (vec)
-       (walk 0 0 normal-jump)))
+       (walk normal-jump)))

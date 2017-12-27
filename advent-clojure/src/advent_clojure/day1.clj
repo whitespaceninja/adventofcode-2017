@@ -20,13 +20,13 @@
 (defn convert-to-int
   ;; takes a pair of characters and converts them to integers
   [pair]
-  (map #(read-string %) pair))
+  (map read-string pair))
 
 (defn count-pairs
   [input-str look-ahead]
   (let [index-range (range (count input-str))]
     (->> (map #(get-string-pair input-str % look-ahead) index-range)
-         (map #(convert-to-int %))
+         (map convert-to-int)
          (filter #(= (first %) (second %)))
          (map first)
          (reduce +))))

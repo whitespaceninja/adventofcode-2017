@@ -3,7 +3,7 @@
 
 (defn convert-input-to-tokens
   [input]
-  (->> (str/split input #"\n")
+  (->> (str/split-lines input)
        (map #(str/split % #" "))))
 
 (defn is-anagram?
