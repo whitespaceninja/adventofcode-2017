@@ -48,15 +48,25 @@
 ;; hardcoded ending to the lengths as described by puzzle
 (def HARD_END [17 31 73 47 23])
 
-(defn puzzle-10-2
-  [rope input]
+(defn pad-0s
+  [to-pad length]
+  (let [leading-zeros (- length (count to-pad))]
+    (str (reduce str (repeat leading-zeros "0")) to-pad)))
+
+(defn get-knot-hash
+  [input]
   (let [lengths (concat (map int (char-array input)) HARD_END)]
-    (->> (twist-n-times rope lengths 64)
+    (->> (twist-n-times real-rope lengths 64)
          (#(cut-and-tie (:rope %) (:offset %)))
          (partition 16)
          (map #(apply bit-xor %))
          (map #(format "%x" %))
+         (map #(pad-0s % 2))
          (reduce str))))
+
+(defn puzzle-10-2
+  [input]
+  (get-knot-hash input))
 
 (defn puzzle-10-1
   [rope input]
